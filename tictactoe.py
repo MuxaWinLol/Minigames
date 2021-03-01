@@ -286,7 +286,18 @@ class TicTacToe:
                 self.move += 1
                 if self.move != 9 and self.vs_computer:
                     self.make_move(mouse_pos, False)
+        
+        if self.is_win(0, self.cells):
+            self.signal(0)
+            return
 
+        elif self.is_win(1, self.cells):
+            self.signal(1)
+            return
+        elif self.move == 9:
+            self.signal(-1)
+            return
+        
         if not is_user_turn:
             if self.difficulty:
                 x, y = self.get_computer_position()
@@ -304,16 +315,6 @@ class TicTacToe:
         self.all_sprites.update()
         self.update()
         pygame.display.flip()
-        if self.is_win(0, self.cells):
-            self.signal(0)
-            return
-
-        elif self.is_win(1, self.cells):
-            self.signal(1)
-            return
-        elif self.move == 9:
-            self.signal(-1)
-            return
 
     def minimax(self, board, depth, is_ai_turn):
         if self.is_win(PLAYER1, board):
