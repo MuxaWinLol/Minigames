@@ -2,6 +2,7 @@ import pygame
 
 
 def play_music():
-    for i in range(7):
-        pygame.mixer.music.load(r'data\sound_{}.mp3'.format(i))
-    pygame.mixer.music.play()
+    pygame.mixer.music.load(r'data\sound_0.mp3')
+    for i in range(6, 0, -1):
+        pygame.mixer.music.queue(r'data\sound_{}.mp3'.format(i))
+    pygame.mixer.music.play(-1)
