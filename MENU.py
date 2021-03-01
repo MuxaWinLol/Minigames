@@ -50,7 +50,8 @@ class Menu:
     def main_menu(self):
         click = False
         while True:
-
+            if not pygame.mixer.get_busy():
+                music.play_music()
             if not self.playing:
                 self.draw()
             else:
