@@ -29,7 +29,7 @@ def terminate():
 
 
 class TicTacToe:
-    class Digit(pygame.sprite.Sprite):
+    class Digit(pygame.sprite.Sprite): # цифра для отображения счета
         def __init__(self, coords, color, size, *groups):
             super().__init__(*groups)
             x, y = coords
@@ -43,14 +43,13 @@ class TicTacToe:
             programicon = pygame.image.load('icons/tictactoe.png')
             pygame.display.set_icon(programicon)
 
-        def increase(self, digit):
+        def change(self, digit): # узменяем цифру
             self.image = pygame.transform.scale(load_image(self.color + "_" + digit + ".png"), self.size)
 
     def __init__(self, cell_size, margin):
         self.player_1 = 0
         self.player_2 = 0
         self.vs_computer = None
-        self.ai = 0
         self.margin = margin
         self.cell_size = cell_size
         self.width = cell_size * 3 + margin * 2
@@ -60,7 +59,7 @@ class TicTacToe:
         pygame.display.set_caption("Крестики-нолики")
         self.cells = [[-1 for _ in range(3)] for _ in range(3)]
         self.move = 0
-        self.scores = {
+        self.scores = { # словарь для подсчета очков для алгоритма минимакс
             1: 100,
             0: -100,
             'draw': 0
@@ -72,11 +71,12 @@ class TicTacToe:
 
         self.difficulty = None
 
-        self.score_group_1 = pygame.sprite.Group()
+        self.score_group_1 = pygame.sprite.Group() # группы спрайтов для счета
         self.score_group_2 = pygame.sprite.Group()
 
         score_size = self.width // 8, self.height // 7
-
+        
+        # сами спрайты для счета
         self.score1_2 = self.Digit((self.width // 8 - score_size[0] // 2, 5 * self.height // 6), 'b', score_size,
                                    self.score_group_1)
         self.score1_1 = self.Digit((self.width // 8 + score_size[0] // 2, 5 * self.height // 6), 'b', score_size,
@@ -88,8 +88,8 @@ class TicTacToe:
         self.score2_2 = self.Digit(
             (self.width - self.width // 8 - score_size[0] // 2 - score_size[0], 5 * self.height // 6), 'r', score_size,
             self.score_group_2)
-
-    def signal(self, result):
+        
+    def signal(self, result): # показать результат игры и обнулить поле
         self.move = 0
         self.all_sprites.empty()
         self.cells = [[-1 for _ in range(3)] for _ in range(3)]
@@ -101,14 +101,14 @@ class TicTacToe:
         elif result == 0:
             fon_name = "o_win.png"
             self.player_1 += 1
-            self.score1_1.increase(str(self.player_1).rjust(2, '0')[1])
-            self.score1_2.increase(str(self.player_1).rjust(2, '0')[0])
+            self.score1_1.change(str(self.player_1).rjust(2, '0')[1])
+            self.score1_2.change(str(self.player_1).rjust(2, '0')[0])
             self.score_group_1.update(self.screen)
         else:
             fon_name = "x_win.png"
             self.player_2 += 1
-            self.score2_1.increase(str(self.player_2).rjust(2, '0')[1])
-            self.score2_2.increase(str(self.player_2).rjust(2, '0')[0])
+            self.score2_1.change(str(self.player_2).rjust(2, '0')[1])
+            self.score2_2.change(str(self.player_2).rjust(2, '0')[0])
             self.score_group_2.update(self.screen)
 
         fon = pygame.transform.scale(load_image(fon_name), (self.width, self.height))
@@ -119,7 +119,7 @@ class TicTacToe:
         self.screen.fill((0, 0, 0))
         self.update()
 
-    def selection_mode(self, difficulty=True):
+    def selection_mode(self, selecting_player_numbers=True): # выбор режима и сложности
 
         button_size = self.width // 4, 7 * self.width // 4 // 20
 
@@ -139,7 +139,7 @@ class TicTacToe:
                 return True
             return False
 
-        class PlayerButton(pygame.sprite.Sprite):
+        class PlayerButton(pygame.sprite.Sprite): # кнопка
             def __init__(self, coords, image, image_fon, *groups):
                 super().__init__(*groups)
                 x, y = coords
@@ -151,7 +151,7 @@ class TicTacToe:
                 self.rect.x = x
                 self.rect.y = y
 
-            def update(self):
+            def update(self): # подсветка при наведении курсора
                 if self.turn:
                     self.image = self.image_fon
                     self.turn = False
@@ -163,7 +163,7 @@ class TicTacToe:
         coords_2 = self.width // 2 - self.width // 8, self.height // 2
 
         sprites_1 = pygame.sprite.Group()
-        if difficulty:
+        if selecting_player_numbers: # если выбор количества игроков, то картинки с нужной надписью
             button1_name = "1pl.png"
             button1_fon_name = "1pl_fon.png"
             button2_name = "2pl.png"
@@ -205,7 +205,7 @@ class TicTacToe:
                     terminate()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if on_button_1(event.pos):
-                        if difficulty:
+                        if selecting_player_numbers:
                             self.vs_computer = True
                             self.selection_mode(False)
                             return
@@ -213,7 +213,7 @@ class TicTacToe:
                         self.screen.fill((0, 0, 0))
                         return
                     elif on_button_2(event.pos):
-                        if difficulty:
+                        if selecting_player_numbers:
                             self.vs_computer = False
                             self.screen.fill((0, 0, 0))
                             return
@@ -230,7 +230,7 @@ class TicTacToe:
 
             pygame.display.flip()
 
-    def update(self):
+    def update(self): # обновляем экран, когда сделали ход или очистили поле
         self.screen.fill((0, 0, 0))
         self.all_sprites.draw(self.screen)
         self.score_group_1.draw(self.screen)
@@ -246,13 +246,13 @@ class TicTacToe:
 
         pygame.display.flip()
 
-    def get_random_cell(self):
+    def get_random_cell(self): # выбор хода для легкого режима
         while True:
             x, y = random.randint(0, 2), random.randint(0, 2)
             if self.cells[y][x] == -1:
                 return x, y
 
-    def make_move(self, mouse_pos, is_user_turn):
+    def make_move(self, mouse_pos, is_user_turn): # делаем ход
         krestik = pygame.sprite.Sprite()
         krestik.image = self.x_image
         krestik.rect = krestik.image.get_rect()
@@ -284,7 +284,7 @@ class TicTacToe:
                     self.all_sprites.add(nolik)
 
                 self.move += 1
-                if self.move != 9 and self.vs_computer:
+                if self.move != 9 and self.vs_computer: # делаем ход компьютера
                     self.make_move(mouse_pos, False)
         
         if self.is_win(0, self.cells):
@@ -316,7 +316,7 @@ class TicTacToe:
         self.update()
         pygame.display.flip()
 
-    def minimax(self, board, depth, is_ai_turn):
+    def minimax(self, board, depth, is_ai_turn): # рекурсивный алгоритм для поиска лучшего решения
         if self.is_win(PLAYER1, board):
             return self.scores[PLAYER1]
         if self.is_win(PLAYER2, board):
@@ -335,7 +335,7 @@ class TicTacToe:
                         board[y][x] = EMPTY
                         best_score = max(best_score, score)
         else:
-            # противник выбирает ход который нам не выгоден
+            # пользователь выбирает ход который нам не выгоден
             best_score = sys.maxsize
             for y in range(3):
                 for x in range(3):
@@ -346,7 +346,7 @@ class TicTacToe:
                         best_score = min(best_score, score)
         return best_score
 
-    def get_computer_position(self):
+    def get_computer_position(self): # рассматриваем все возможные ходы и считаем наилучший
         move = None
         best_score = -sys.maxsize
         board = [self.cells[y].copy() for y in range(3)]
@@ -362,7 +362,7 @@ class TicTacToe:
         return move
 
     @staticmethod
-    def is_win(char, field):
+    def is_win(char, field): # проверка на победу
         opponent_char = int(not bool(char))
         # проверяем строки
         for y in range(3):
@@ -386,13 +386,13 @@ class TicTacToe:
         return False
 
     @staticmethod
-    def is_draw(board):
+    def is_draw(board): # проверка на заполнение поля
         count = 0
         for y in range(3):
             count += 1 if EMPTY in board[y] else 0
         return count == 0
 
-    def start(self):
+    def start(self): # основной цикл
         running = True
         while running:
             for event in pygame.event.get():
