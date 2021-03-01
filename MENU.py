@@ -4,13 +4,18 @@ from forinarow import *
 from py2048 import DveTysyachiSorokVosyem
 from tetris import Tetris
 from tictactoe import *
+import music
 
 
 class Menu:
     def __init__(self):
+        # Инициализация класса
         pygame.init()
+
         self.cl = pygame.time.Clock()
         self.font = pygame.font.SysFont("Comic Sans MS", 20)
+        self.screen = pygame.display.set_mode((400, 500), 0, 32)
+
         self.size = 100, 100
         self.ims = [pygame.transform.scale(pygame.image.load("icons/2048.png"), self.size),
                     pygame.transform.scale(pygame.image.load("icons/tetris.png"), self.size),
@@ -25,11 +30,12 @@ class Menu:
         self.button_2 = pygame.Rect(self.imrects[1])
         self.button_3 = pygame.Rect(self.imrects[2])
         self.button_4 = pygame.Rect(self.imrects[3])
-        self.screen = pygame.display.set_mode((400, 500), 0, 32)
+
         self.draw()
         self.playing = False
 
     def draw(self):
+        # Прорисовывание меню
         pygame.display.set_caption("Main Menu")
         programicon = pygame.image.load('icons/menu.png')
         pygame.display.set_icon(programicon)
@@ -42,12 +48,14 @@ class Menu:
 
     @staticmethod
     def draw_text(text, font, color, surface, x, y):
+        # Прорисовывание текста
         textobj = font.render(text, 1, color)
         textrect = textobj.get_rect()
         textrect.topleft = (x, y)
         surface.blit(textobj, textrect)
 
     def main_menu(self):
+        # Игровой цикл
         click = False
         while True:
             if not self.playing:
@@ -57,6 +65,7 @@ class Menu:
                     if fil.read():
                         self.playing = False
 
+            # Проверка коллизии кнопки и мыши
             mx, my = pygame.mouse.get_pos()
             if click:
                 if self.button_1.collidepoint((mx, my)):
@@ -79,6 +88,7 @@ class Menu:
                     self.playing = True
 
             click = False
+            # Считывание событий с клавиатуры и мыши
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -90,13 +100,15 @@ class Menu:
                 if event.type == MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
+                if event.type == music.STOPPED_PLAYING:
+                    music.play_music()
 
             pygame.display.update()
             self.cl.tick(60)
 
 
 if __name__ == '__main__':
-    import music
+    # Запуск музыки и меню
     music.play_music()
     m = Menu()
     m.main_menu()

@@ -5,6 +5,8 @@ import sys
 import numpy as np
 import pygame
 
+import music
+
 pygame.init()
 
 BLUE = pygame.Color('blue')
@@ -269,6 +271,8 @@ class FourInARow:
                         with open("game_end.txt", "w+") as fil:
                             fil.write("1")
                         break
+                if event.type == music.STOPPED_PLAYING:
+                    music.play_music()
             if running:
                 if turn == AI and not game_over:
                     col, minimax_score = self.minimax(self.board, 5, -math.inf, math.inf, True)

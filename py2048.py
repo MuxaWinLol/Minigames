@@ -27,6 +27,7 @@ ColorPalette = {
 
 class DveTysyachiSorokVosyem:
     def __init__(self, menu_sc):
+        # Инициализация класса
         self.menu_sc = menu_sc
         self.num = 4
         if self.num < 2:
@@ -82,28 +83,8 @@ class DveTysyachiSorokVosyem:
             else:
                 self.grid[pos] = 2
 
-    def wait_for_key(self):
-        while True:
-            if self.is_game_over():
-                self.fl = False
-                print('GAME OVER!')
-                break
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    return 'q'
-                if event.type == KEYDOWN:
-                    if event.key == K_UP:
-                        return 'u'
-                    elif event.key == K_RIGHT:
-                        return 'r'
-                    elif event.key == K_LEFT:
-                        return 'l'
-                    elif event.key == K_DOWN:
-                        return 'd'
-                    elif event.key == K_q or event.key == K_ESCAPE:
-                        return 'q'
-
     def make_move(self, move):
+        # Ход
         for i in range(self.num):
             if move in 'lr':
                 this = self.grid[i, :]
@@ -129,6 +110,7 @@ class DveTysyachiSorokVosyem:
                 self.grid[:, i] = new_this
 
     def draw(self):
+        # Прорисовывание игры
         self.screen.fill((189, 172, 161))
 
         for i in range(self.num):
@@ -150,6 +132,7 @@ class DveTysyachiSorokVosyem:
                     self.screen.blit(text_surface, text_rect)
 
     def is_game_over(self):
+        # Проверка на наличие ходов
         grid_bu = self.grid.copy()
         for move in 'lrud':
             self.make_move(move)
@@ -158,7 +141,30 @@ class DveTysyachiSorokVosyem:
                 return False
         return True
 
+    def wait_for_key(self):
+        # Считывание событий с клавиатуры
+        while True:
+            if self.is_game_over():
+                self.fl = False
+                print('GAME OVER!')
+                break
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    return 'q'
+                if event.type == KEYDOWN:
+                    if event.key == K_UP:
+                        return 'u'
+                    elif event.key == K_RIGHT:
+                        return 'r'
+                    elif event.key == K_LEFT:
+                        return 'l'
+                    elif event.key == K_DOWN:
+                        return 'd'
+                    elif event.key == K_q or event.key == K_ESCAPE:
+                        return 'q'
+
     def play(self):
+        # Игровой цикл
         self.gen_num(2)
 
         while True:

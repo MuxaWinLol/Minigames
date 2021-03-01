@@ -5,12 +5,12 @@ import time
 
 import pygame
 
+import music
+
 pygame.init()
 EMPTY = -1
 PLAYER1 = 0
 PLAYER2 = 1
-
-FPS = 50
 
 
 def load_image(name):
@@ -220,6 +220,8 @@ class TicTacToe:
                         self.difficulty = 0
                         self.screen.fill((0, 0, 0))
                         return
+                if event.type == music.STOPPED_PLAYING:
+                    music.play_music()
 
             self.screen.fill((0, 0, 0))
             self.screen.blit(fon, (0, 0))
@@ -404,3 +406,5 @@ class TicTacToe:
                         with open("game_end.txt", "w+") as fil:
                             fil.write("1")
                         break
+                if event.type == music.STOPPED_PLAYING:
+                    music.play_music()

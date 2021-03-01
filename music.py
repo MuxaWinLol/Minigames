@@ -1,8 +1,17 @@
 import pygame
 
+STOPPED_PLAYING = pygame.USEREVENT + 1
+pygame.mixer.music.set_endevent(STOPPED_PLAYING)
+
+
+numbers_of_sounds = list(range(0, 7))
+curr_number = 0
+
 
 def play_music():
-    pygame.mixer.music.load(r'data\sound_0.mp3')
-    for i in range(6, 0, -1):
-        pygame.mixer.music.queue(r'data\sound_{}.mp3'.format(i))
+    global curr_number
+    pygame.mixer.music.load(r'data\sound_{}.mp3'.format(curr_number))
     pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.005)
+    curr_number += 1
+    curr_number = curr_number % len(numbers_of_sounds)
