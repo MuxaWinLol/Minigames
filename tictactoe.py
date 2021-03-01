@@ -316,7 +316,7 @@ class TicTacToe:
         self.update()
         pygame.display.flip()
 
-    def minimax(self, board, depth, is_ai_turn): # рекурсивный алгоритм для поиска лучшего решения
+    def minimax(self, board, is_ai_turn): # рекурсивный алгоритм для поиска лучшего решения
         if self.is_win(PLAYER1, board):
             return self.scores[PLAYER1]
         if self.is_win(PLAYER2, board):
@@ -331,7 +331,7 @@ class TicTacToe:
                 for x in range(3):
                     if board[y][x] == EMPTY:
                         board[y][x] = PLAYER2
-                        score = self.minimax(board, depth + 1, False)
+                        score = self.minimax(board, False)
                         board[y][x] = EMPTY
                         best_score = max(best_score, score)
         else:
@@ -341,7 +341,7 @@ class TicTacToe:
                 for x in range(3):
                     if board[y][x] == -1:
                         board[y][x] = PLAYER1
-                        score = self.minimax(board, depth + 1, True)
+                        score = self.minimax(board, True)
                         board[y][x] = EMPTY
                         best_score = min(best_score, score)
         return best_score
@@ -354,7 +354,7 @@ class TicTacToe:
             for x in range(3):
                 if board[y][x] == EMPTY:
                     board[y][x] = PLAYER2
-                    score = self.minimax(board, 0, False)
+                    score = self.minimax(board, False)
                     board[y][x] = EMPTY
                     if score > best_score:
                         best_score = score
