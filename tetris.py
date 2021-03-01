@@ -87,10 +87,10 @@ class Tetris:
             dx, rotate = 0, False
 
             self.draw(record)
-            # delay for full lines
+
             for i in range(self.lines):
                 pygame.time.wait(200)
-            # control
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -112,18 +112,17 @@ class Tetris:
                         self.screen = self.menu_sc
                         with open("game_end.txt", "w+") as fil:
                             fil.write("1")
-                        print(1)
                         break
             if not self.running:
                 break
-            # move x
+
             figure_old = deepcopy(self.figure)
             for i in range(4):
                 self.figure[i].x += dx
                 if not self.collision_check(i):
                     self.figure = deepcopy(figure_old)
                     break
-            # move y
+
             self.anim_count += self.anim_speed
             if self.anim_count > self.anim_limit:
                 self.anim_count = 0
@@ -169,7 +168,6 @@ class Tetris:
 
             pygame.display.flip()
             self.clock.tick(self.FPS)
-
 
     def gameover(self, record):
         # game over

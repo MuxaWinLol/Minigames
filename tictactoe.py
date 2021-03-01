@@ -1,20 +1,19 @@
-import pygame
-import sys
 import os
 import random
+import sys
 import time
-import music
+
+import pygame
 
 pygame.init()
 EMPTY = -1
 PLAYER1 = 0
 PLAYER2 = 1
 
-
 FPS = 50
 
 
-def load_image(name, colorkey=None):
+def load_image(name):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
@@ -75,11 +74,17 @@ class TicTacToe:
 
         score_size = self.width // 8, self.height // 7
 
-        self.score1_2 = self.Digit((self.width // 8 - score_size[0] // 2, 5 * self.height // 6), 'b', score_size, self.score_group_1)
-        self.score1_1 = self.Digit((self.width // 8 + score_size[0] // 2, 5 * self.height // 6), 'b', score_size, self.score_group_1)
+        self.score1_2 = self.Digit((self.width // 8 - score_size[0] // 2, 5 * self.height // 6), 'b', score_size,
+                                   self.score_group_1)
+        self.score1_1 = self.Digit((self.width // 8 + score_size[0] // 2, 5 * self.height // 6), 'b', score_size,
+                                   self.score_group_1)
 
-        self.score2_1 = self.Digit((self.width - self.width // 8 + score_size[0] // 2 - score_size[0], 5 * self.height // 6), 'r', score_size, self.score_group_2)
-        self.score2_2 = self.Digit((self.width - self.width // 8 - score_size[0] // 2 - score_size[0], 5 * self.height // 6), 'r', score_size, self.score_group_2)
+        self.score2_1 = self.Digit(
+            (self.width - self.width // 8 + score_size[0] // 2 - score_size[0], 5 * self.height // 6), 'r', score_size,
+            self.score_group_2)
+        self.score2_2 = self.Digit(
+            (self.width - self.width // 8 - score_size[0] // 2 - score_size[0], 5 * self.height // 6), 'r', score_size,
+            self.score_group_2)
 
     def signal(self, result):
         self.move = 0
@@ -227,7 +232,8 @@ class TicTacToe:
         self.score_group_2.draw(self.screen)
         color = pygame.Color('white')
         pygame.draw.rect(self.screen, color, (self.cell_size, 0, self.margin, self.height - self.width // 4))
-        pygame.draw.rect(self.screen, color, (2 * self.cell_size + self.margin, 0, self.margin, self.height - self.width // 4))
+        pygame.draw.rect(self.screen, color,
+                         (2 * self.cell_size + self.margin, 0, self.margin, self.height - self.width // 4))
         pygame.draw.rect(self.screen, color, (0, self.cell_size, self.width, self.margin))
         pygame.draw.rect(self.screen, color, (0, 2 * self.cell_size + self.margin, self.width, self.margin))
 
@@ -349,7 +355,8 @@ class TicTacToe:
                         move = x, y
         return move
 
-    def is_win(self, char, field):
+    @staticmethod
+    def is_win(char, field):
         opponent_char = int(not bool(char))
         # проверяем строки
         for y in range(3):
@@ -372,12 +379,13 @@ class TicTacToe:
 
         return False
 
-    def is_draw(self, board):
+    @staticmethod
+    def is_draw(board):
         count = 0
         for y in range(3):
             count += 1 if EMPTY in board[y] else 0
         return count == 0
-    
+
     def start(self):
         running = True
         while running:
@@ -385,13 +393,11 @@ class TicTacToe:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    game.make_move(event.pos, True)
-                    game.screen.fill((0, 0, 0))
-        pygame.quit()
-
-
-game = TicTacToe(250, 20)
-music.play_music()
-game.selection_mode()
-game.update()
-game.start()
+                    self.make_move(event.pos, True)
+                    self.screen.fill((0, 0, 0))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        with open("game_end.txt", "w+") as fil:
+                            fil.write("1")
+                        break

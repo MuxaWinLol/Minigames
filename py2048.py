@@ -75,7 +75,7 @@ class DveTysyachiSorokVosyem:
         elif k > self.num * self.num:
             k = self.num
         free_poss = list(zip(*np.where(self.grid == 0)))
-        for pos in random.sample(free_poss, k=k):
+        for pos in random.sample(free_poss, k):
             self.grid[pos] = 0
             if random.random() < 0.1:
                 self.grid[pos] = 4

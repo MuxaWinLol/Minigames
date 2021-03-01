@@ -1,8 +1,9 @@
-import numpy as np
-import random
-import pygame
-import sys
 import math
+import random
+import sys
+
+import numpy as np
+import pygame
 
 pygame.init()
 
@@ -40,7 +41,8 @@ class ForInARow:
         board = np.zeros((self.row_count, self.col_count))
         return board
 
-    def drop_piece(self, board, row, col, piece):
+    @staticmethod
+    def drop_piece(board, row, col, piece):
         board[row][col] = piece
 
     def is_valid_location(self, board, col):
@@ -66,15 +68,18 @@ class ForInARow:
 
         for c in range(self.col_count - 3):
             for r in range(self.row_count - 3):
-                if board[r][c] == piece and board[r + 1][c + 1] == piece and board[r + 2][c + 2] == piece and board[r + 3][c + 3] == piece:
+                if board[r][c] == piece and board[r + 1][c + 1] == piece and board[r + 2][c + 2] == piece and \
+                        board[r + 3][c + 3] == piece:
                     return True
 
         for c in range(self.col_count - 3):
             for r in range(3, self.row_count):
-                if board[r][c] == piece and board[r - 1][c + 1] == piece and board[r - 2][c + 2] == piece and board[r - 3][c + 3] == piece:
+                if board[r][c] == piece and board[r - 1][c + 1] == piece and board[r - 2][c + 2] == piece and \
+                        board[r - 3][c + 3] == piece:
                     return True
 
-    def evaluate_window(self, window, piece):
+    @staticmethod
+    def evaluate_window(window, piece):
         score = 0
         opp_piece = PLAYER_PIECE
         if piece == PLAYER_PIECE:
@@ -127,7 +132,7 @@ class ForInARow:
         return self.winning_move(board, PLAYER_PIECE) or \
                self.winning_move(board, AI_PIECE) or len(self.get_valid_locations(board)) == 0
 
-    def minimax(self, board, depth, alpha, beta, maximizingPlayer):
+    def minimax(self, board, depth, alpha, beta, maximizing_player):
         valid_locations = self.get_valid_locations(board)
         is_terminal = self.is_terminal_node(board)
         if depth == 0 or is_terminal:
@@ -140,7 +145,7 @@ class ForInARow:
                     return None, 0
             else:
                 return None, self.score_position(board, AI_PIECE)
-        if maximizingPlayer:
+        if maximizing_player:
             value = -math.inf
             column = random.choice(valid_locations)
             for col in valid_locations:
@@ -200,30 +205,30 @@ class ForInARow:
                 pygame.draw.rect(self.screen, BLUE,
                                  (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))
                 pygame.draw.circle(self.screen, BLACK, (int(c * SQUARESIZE + SQUARESIZE / 2),
-                                                   int(r * SQUARESIZE + SQUARESIZE + SQUARESIZE / 2)),
+                                                        int(r * SQUARESIZE + SQUARESIZE + SQUARESIZE / 2)),
                                    RADIUS)
 
         for c in range(self.col_count):
             for r in range(self.row_count):
                 if board[r][c] == PLAYER_PIECE:
                     pygame.draw.circle(self.screen, RED, (int(c * SQUARESIZE + SQUARESIZE / 2),
-                                                     self.height - int(r * SQUARESIZE + SQUARESIZE / 2)),
+                                                          self.height - int(r * SQUARESIZE + SQUARESIZE / 2)),
                                        RADIUS)
                 elif board[r][c] == AI_PIECE:
                     pygame.draw.circle(self.screen, YELLOW, (int(c * SQUARESIZE + SQUARESIZE / 2),
-                                                        self.height - int(r * SQUARESIZE + SQUARESIZE / 2)),
+                                                             self.height - int(r * SQUARESIZE + SQUARESIZE / 2)),
                                        RADIUS)
         pygame.display.update()
 
     def start(self):
         pygame.display.update()
         game_over = False
+        running = True
         myfont = pygame.font.SysFont("monospace", 75)
 
         turn = random.randint(PLAYER, AI)
 
-        while not game_over:
-
+        while not game_over and running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
@@ -255,26 +260,29 @@ class ForInARow:
                             turn = turn % 2
 
                             self.draw_board(self.board)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        with open("game_end.txt", "w+") as fil:
+                            fil.write("1")
+                        break
+            if running:
+                if turn == AI and not game_over:
+                    col, minimax_score = self.minimax(self.board, 5, -math.inf, math.inf, True)
 
-            if turn == AI and not game_over:
-                col, minimax_score = self.minimax(self.board, 5, -math.inf, math.inf, True)
+                    if self.is_valid_location(self.board, col):
+                        row = self.get_next_open_row(self.board, col)
+                        self.drop_piece(self.board, row, col, AI_PIECE)
 
-                if self.is_valid_location(self.board, col):
-                    row = self.get_next_open_row(self.board, col)
-                    self.drop_piece(self.board, row, col, AI_PIECE)
+                        if self.winning_move(self.board, AI_PIECE):
+                            label = myfont.render("Желтый победил!", True, YELLOW)
+                            self.screen.blit(label, (40, 10))
+                            game_over = True
 
-                    if self.winning_move(self.board, AI_PIECE):
-                        label = myfont.render("Желтый победил!", True, YELLOW)
-                        self.screen.blit(label, (40, 10))
-                        game_over = True
+                        self.draw_board(self.board)
 
-                    self.draw_board(self.board)
+                        turn += 1
+                        turn = turn % 2
 
-                    turn += 1
-                    turn = turn % 2
-
-            if game_over:
-                pygame.time.wait(3000)
-
-game = ForInARow(6, 7)
-game.start()
+                if game_over:
+                    pygame.time.wait(3000)

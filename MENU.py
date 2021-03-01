@@ -1,10 +1,9 @@
-import sys
-
-import pygame
 from pygame.locals import *
 
+from forinarow import *
 from py2048 import DveTysyachiSorokVosyem
 from tetris import Tetris
+from tictactoe import *
 
 
 class Menu:
@@ -12,22 +11,34 @@ class Menu:
         pygame.init()
         self.cl = pygame.time.Clock()
         self.font = pygame.font.SysFont("Comic Sans MS", 20)
-        self.button_1 = pygame.Rect(50, 100, 200, 50)
-        self.button_2 = pygame.Rect(50, 200, 200, 50)
-        self.draw()
+        self.size = 100, 100
+        self.ims = [pygame.transform.scale(pygame.image.load("icons/2048.png"), self.size),
+                    pygame.transform.scale(pygame.image.load("icons/tetris.png"), self.size),
+                    pygame.transform.scale(pygame.image.load("icons/4inarow.png"), self.size),
+                    pygame.transform.scale(pygame.image.load("icons/tictactoe.png"), self.size)]
+        self.imrects = [(50, 100, 100, 100),
+                        (50, 300, 100, 100),
+                        (250, 100, 100, 100),
+                        (250, 300, 100, 100)]
 
-        self.screen = pygame.display.set_mode((500, 500), 0, 32)
+        self.button_1 = pygame.Rect(self.imrects[0])
+        self.button_2 = pygame.Rect(self.imrects[1])
+        self.button_3 = pygame.Rect(self.imrects[2])
+        self.button_4 = pygame.Rect(self.imrects[3])
+        self.screen = pygame.display.set_mode((400, 500), 0, 32)
+        self.draw()
         self.playing = False
 
     def draw(self):
         pygame.display.set_caption("Main Menu")
         programicon = pygame.image.load('icons/menu.png')
         pygame.display.set_icon(programicon)
-        self.screen = pygame.display.set_mode((500, 500), 0, 32)
-        self.screen.fill((0, 0, 0))
-        self.draw_text('main menu', self.font, (255, 255, 255), self.screen, 20, 20)
-        pygame.draw.rect(self.screen, (255, 0, 0), self.button_1)
-        pygame.draw.rect(self.screen, (255, 0, 0), self.button_2)
+        self.screen = pygame.display.set_mode((400, 500), 0, 32)
+        self.screen.fill(pygame.Color("lightblue"))
+        for im, rect in zip(self.ims, self.imrects):
+            self.screen.blit(im, rect)
+
+        self.draw_text('GAMES:', self.font, (255, 255, 255), self.screen, 20, 20)
 
     @staticmethod
     def draw_text(text, font, color, surface, x, y):
@@ -50,7 +61,6 @@ class Menu:
             mx, my = pygame.mouse.get_pos()
             if click:
                 if self.button_1.collidepoint((mx, my)):
-
                     g = DveTysyachiSorokVosyem(self.screen)
                     g.play()
                     self.playing = True
@@ -58,12 +68,22 @@ class Menu:
                     g = Tetris(self.screen)
                     g.cycle()
                     self.playing = True
+                elif self.button_3.collidepoint((mx, my)):
+                    g = ForInARow(6, 7)
+                    g.start()
+                    self.playing = True
+                elif self.button_4.collidepoint((mx, my)):
+                    g = TicTacToe(250, 20)
+                    g.selection_mode()
+                    g.update()
+                    g.start()
+                    self.playing = True
 
             click = False
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
-                    sys.exit()
+                    exit()
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         pygame.quit()
@@ -77,5 +97,7 @@ class Menu:
 
 
 if __name__ == '__main__':
+    import music
+    music.play_music()
     m = Menu()
     m.main_menu()
