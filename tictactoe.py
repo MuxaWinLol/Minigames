@@ -3,6 +3,7 @@ import sys
 import os
 import random
 import time
+import music
 
 pygame.init()
 EMPTY = -1
@@ -376,20 +377,21 @@ class TicTacToe:
         for y in range(3):
             count += 1 if EMPTY in board[y] else 0
         return count == 0
+    
+    def start(self):
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    game.make_move(event.pos, True)
+                    game.screen.fill((0, 0, 0))
+        pygame.quit()
 
 
-players_count = 1
-running = True
 game = TicTacToe(250, 20)
+music.play_music()
 game.selection_mode()
 game.update()
-pygame.display.flip()
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            game.make_move(event.pos, True)
-            game.screen.fill((0, 0, 0))
-pygame.quit()
+game.start()
