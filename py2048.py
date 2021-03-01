@@ -50,7 +50,8 @@ class DveTysyachiSorokVosyem:
         self.screen = pygame.display.set_mode((self.sz, self.sz))
 
     @staticmethod
-    def get_num(this):
+    def get_next_num(this):
+        # Берет число
         this_n = this[this != 0]
         this_n_sum = []
         skip = False
@@ -71,6 +72,7 @@ class DveTysyachiSorokVosyem:
         return str(self.grid)
 
     def gen_num(self, k=1):
+        # Берет число
         if k < 1:
             k = 1
         elif k > self.num * self.num:
@@ -84,7 +86,7 @@ class DveTysyachiSorokVosyem:
                 self.grid[pos] = 2
 
     def make_move(self, move):
-        # Ход
+        # Делает ход
         for i in range(self.num):
             if move in 'lr':
                 this = self.grid[i, :]
@@ -96,7 +98,7 @@ class DveTysyachiSorokVosyem:
                 flipped = True
                 this = this[::-1]
 
-            this_n = self.get_num(this)
+            this_n = self.get_next_num(this)
 
             new_this = np.zeros_like(this)
             new_this[:len(this_n)] = this_n
