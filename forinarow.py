@@ -26,7 +26,7 @@ SQUARESIZE = 100
 RADIUS = int(SQUARESIZE / 2 - 5)
 
 
-class ForInARow:
+class FourInARow:
     def __init__(self, row_count, col_count):
         self.row_count = row_count
         self.col_count = col_count
@@ -36,6 +36,9 @@ class ForInARow:
         self.screen = pygame.display.set_mode(self.size)
         self.board = self.create_board()
         self.draw_board(self.board)
+        pygame.display.set_caption("FourInARow")
+        programicon = pygame.image.load('icons/4inarow.png')
+        pygame.display.set_icon(programicon)
 
     def create_board(self):
         board = np.zeros((self.row_count, self.col_count))

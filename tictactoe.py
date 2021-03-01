@@ -39,6 +39,9 @@ class TicTacToe:
             self.rect = self.image.get_rect()
             self.rect.x = x
             self.rect.y = y
+            pygame.display.set_caption("TicTacToe")
+            programicon = pygame.image.load('icons/tictactoe.png')
+            pygame.display.set_icon(programicon)
 
         def increase(self, digit):
             self.image = pygame.transform.scale(load_image(self.color + "_" + digit + ".png"), self.size)

@@ -50,8 +50,6 @@ class Menu:
     def main_menu(self):
         click = False
         while True:
-            if not pygame.mixer.get_busy():
-                music.play_music()
             if not self.playing:
                 self.draw()
             else:
@@ -70,7 +68,7 @@ class Menu:
                     g.cycle()
                     self.playing = True
                 elif self.button_3.collidepoint((mx, my)):
-                    g = ForInARow(6, 7)
+                    g = FourInARow(6, 7)
                     g.start()
                     self.playing = True
                 elif self.button_4.collidepoint((mx, my)):
